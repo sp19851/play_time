@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.1.0/dist/quasar.umd.prod.js" defer></script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+    
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>-->
+    <title>Players playing time</title>
+</head>
+<body>
+    <div id="app"> 
+        <div class="main-container" v-show="show">
+            <div class="top">
+                <p class="top_text1"></p>
+                <span><img src="./img/myLogo.png" width="55" height="55"   alt=""> </span>
+                <p class="top_text"></p>
+                <p class="top_text2"> Активность игроков</p>
+                
+            </div>
+            <div class = container>
+                <div class="navi">
+                    <button class="navi_item" @click="allPlayers()">Все игроки</button>
+                    <button class="navi_item" @click="onBosses()">Лидеры фракций</button>
+                    <button class="navi_item" @click="onFractions()">Фракции</button>
+                    <button class="navi_item" @click="onGangs()">Банды</button>
+                    <button @click="onClose" class="navi_item">Выход</button>
+                </div>
+                <div class = "players">
+                    <div v-for="item in players"  :key="item.id" >
+                        <div class="player">
+                            <div>citizenid: {{item.citizenid}}, Имя: {{item.name}}</div>
+                            <div>job: {{item.job}}, gang: {{item.gang}}</div>
+                            <div v-if="IsBoss(item)" >isboos: <span style="color:green">да</span></div>
+                            <div v-else>isboos: нет</div>
+                            <div>время в игре в часах: {{item.timeingame}} , последний заход: {{item.lastenter}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show="modalWindowShoing">
+                                   
+                <div class="dialog">
+                    <div class="dialog__content"> Выберите категорию
+                        <select v-model="currentFraction" class="navi_item" style="width:100%;" @change="selected($event.target.value)">
+                            <option  v-for="option in selecdata" :key="option.id" :value="option">{{option.label}}</option>
+                          </select>
+                        <!--<p style="justify-content: center;
+                        align-items: center;text-align: center;">{{dialogContent}}?</p>
+                        <div style="display: flex;">
+                            <button 
+                            class="btn buy"
+                            @click="btnAccept"
+                            
+                            >
+                                Да
+                            </button>
+                            <button 
+                            class="btn sale"
+                            @click="btnCancel"
+                            style="flex-direction: space-between;"
+                            >
+                                Нет
+                            </button>
+                        </div> -->
+                    </div>
+                </div>
+
+                
+               
+            </div>
+
+
+           <!--<div class ="alerts">
+                    <div v-show="!callSingFiltered">
+                        <div  v-for="item in filteredTypes"  :key="item.id" >
+                            <div class="alerts_item">
+                                <div style="color:white;"> {{item.description}}</div>
+                                <div style="color:white; font-size: 11px">{{item.postal}}, {{item.adress}} {{item.lastenter}}
+                                    <div v-if="isR(item.attached)">(Прикреплены:
+                                        <span  v-for="list in item.attached" :key="list.id_at">
+                                            <span style="color:white; font-size: 11px"> {{list.cs}}, </span>
+                                        </span>
+                                    )</div>
+                                </div>
+                                <button v-if="!isA(item)" @click="attach(item)" class="btn buy">Принять</button>
+                                <button v-if="isA(item)" @click="dettach(item)" class="btn sale">Открепиться</button>
+                                <button class="btn route" @click="route(item)">Маршрут</button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div v-show="callSingFiltered">
+                        <div v-show="callSingFiltered" v-for="item in filteredAlerts"  :key="item.id">
+                            <div class="alerts_item">
+                                <div style="color:white;"> {{item.description}}</div>
+                                <div style="color:white; font-size: 11px">{{item.postal}}, {{item.adress}}
+                                    <div v-if="isR(item.attached)">(Прикреплены:
+                                        <span  v-for="list in item.attached" :key="list.id_at">
+                                            <span style="color:white; font-size: 11px"> {{list.cs}}, </span>
+                                        </span>
+                                    )</div>
+                                </div>
+                                <button v-if="!isA(item)"class="btn buy" >Принять</button>
+                                <button v-if="isA(item)" @click="dettach(item)" class="btn sale">Открепиться</button>
+                                <button class="btn route" @click="route(item)">Маршрут</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+
+            </div>   -->
+        </div>
+       
+       
+        
+    </div>
+    
+</body>
+<script src="./scripts/app.js"></script>  
+
+</html>
