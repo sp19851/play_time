@@ -8,13 +8,15 @@ local function updatetime(source)
     --local identifier = QBCore.Functions.GetIdentifier(src, 'license')
     local gametime = os.time() - startTime[src].entertime
     print('before sql',  GetPlayerName(src), startTime[src].timeingame, gametime)
-    exports.oxmysql:insert('INSERT INTO play_time (citizenid, nick, license, timeingame, lastupdate) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE citizenid = ?, timeingame = ?, lastupdate = ?', {
+    exports.oxmysql:insert('INSERT INTO play_time (citizenid, nick, license, timeingame, lastupdate) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE citizenid = ?, nick= ?, license = ?, timeingame = ?, lastupdate = ?', {
         Player.PlayerData.citizenid,
         GetPlayerName(src),
         startTime[src].identifier,
         startTime[src].timeingame + gametime,
         os.time(),
         Player.PlayerData.citizenid,
+        GetPlayerName(src),
+        startTime[src].identifier,
         startTime[src].timeingame + gametime,
         os.time()
     })
@@ -53,7 +55,7 @@ local function getData(source)
                     job = job,
                     isboss = isbossJob or isbossGang,
                     gang = gang,
-                    timeingame = QBCore.Shared.Round(value.timeingame/3600000, 2),
+                    timeingame = QBCore.Shared.Round(value.timeingame/3600, 2),
                     lastenter = os.date('%c',value.lastupdate)
                 }
             end
@@ -96,13 +98,17 @@ AddEventHandler('playerDropped', function(reason)
     updatetime(src)
 end)
 
-RegisterServerEvent('play_time:server:stop')
+--[[RegisterServerEvent('play_time:server:stop')
 AddEventHandler('play_time:server:stop', function()
     local src = source
     --print('play_time:server:stop')
     updatetime(src)
+end)]]
+RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
+    local src = source
+    --print('play_time:server:stop')
+    updatetime(src)
 end)
-
 
 RegisterServerEvent('play_time:server:start')
 AddEventHandler('play_time:server:start', function()
@@ -145,7 +151,7 @@ AddEventHandler('play_time:server:start', function()
     end
     --print('play_time:server:start', startTime[src].time)
     --print('play_time:server:start',  os.date('%c', startTime[src].time))
-    print('startTime', json.encode(startTime))
+    print('startTime', GetPlayerName(src), identifier, Player.PlayerData.citizenid, json.encode(startTime))
 end)
 
 
